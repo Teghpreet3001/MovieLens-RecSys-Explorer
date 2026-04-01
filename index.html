@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE 6242: Movie Recommender Explorer</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 20px; }
+        circle:hover { cursor: pointer; stroke-opacity: 1; }
+        #chart { background-color: #fafafa; border: 1px solid #eee; border-radius: 8px; }
+        #movie-info, #comparison-stats { line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Movie Explorer</h1>
+    <p>Exploring the MovieLens-25M Dataset</p>
+
+    <div style="display: flex; gap: 20px;">
+        <div id="chart"></div>
+
+        <div id="details" style="width: 350px; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px; height: fit-content;">
+            <h2 style="margin-top: 0;">Movie Details</h2>
+            <div id="movie-info"><em>Click a dot on the map to inspect the "Search Space"</em></div>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <h3 style="margin-top: 0;">Algorithmic Trade-offs</h3>
+            <div id="comparison-stats">
+                Selecting a movie will show if it's a "Global Hit" vs. a "Personalized Niche" find.
+            </div>
+
+         </div>
+    </div>
+    <div id="onboarding" style="padding: 20px; background: #f0f4ff; border-radius: 12px; margin-bottom: 20px; border: 1px solid #d0d7de;">
+        <h3 style="margin-top:0;">Personalize Your Map</h3>
+        <p>Type 5 movies you love to anchor your "Personalized Space":</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" class="movie-input" placeholder="e.g. Toy Story">
+            <input type="text" class="movie-input" placeholder="e.g. Inception">
+            <input type="text" class="movie-input" placeholder="e.g. Matrix, The">
+            <input type="text" class="movie-input" placeholder="e.g. Finding Nemo">
+            <input type="text" class="movie-input" placeholder="e.g. Pulp Fiction">
+        </div>
+        <button onclick="personalizeByNames()" style="margin-top: 15px; padding: 10px 20px; cursor: pointer; background: #0366d6; color: white; border: none; border-radius: 6px;">
+            Build My Personal Map
+        </button>
+    </div>
+    <script src="ui_logic.js"></script>
+
+</body>
+</html>
