@@ -1,0 +1,17 @@
+name: movie
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - matplotlib
+  - scipy
+  - scikit-learn
+  - jupyter
+  - ipykernel
+  - requests
+  - tqdm
+
+  # conda env create -f environment.yml
+  # python -m ipykernel install --user --name movie --display-name "MovieLens Recsys"
