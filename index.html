@@ -6,21 +6,216 @@
     <title>CSE 6242: Movie Recommender Explorer</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 20px; }
-        circle:hover { cursor: pointer; stroke-opacity: 1; }
-        #chart { background-color: #fafafa; border: 1px solid #eee; border-radius: 8px; }
-        #movie-info, #comparison-stats { line-height: 1.5; }
+        :root {
+            --bg: #f4f7fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #5b6472;
+            --border: #dfe5f0;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 28px;
+            background: radial-gradient(circle at top right, #eef4ff 0%, var(--bg) 45%);
+            color: var(--text);
+        }
+        .page-shell {
+            max-width: 1220px;
+            margin: 0 auto;
+        }
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        #chart { background-color: #fbfcff; border: 1px solid #e7edf6; border-radius: 10px; }
+        #movie-info, #comparison-stats { line-height: 1.5; color: #202a3b; }
+        #niche-control {
+            padding: 18px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+            background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+        }
+        #niche-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        #niche-value {
+            font-size: 0.92em;
+            font-weight: 600;
+            color: #17396f;
+            background: #e9f2ff;
+            border: 1px solid #c6dbff;
+            border-radius: 999px;
+            padding: 3px 11px;
+        }
+        #niche-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            outline: none;
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        #niche-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 2px 8px rgba(79, 129, 255, 0.35);
+            cursor: pointer;
+        }
+        #niche-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 2px 8px rgba(79, 129, 255, 0.35);
+            cursor: pointer;
+        }
+        #onboarding {
+            padding: 20px;
+            background: linear-gradient(180deg, #f0f5ff 0%, #eef4ff 100%);
+            border: 1px solid #d3dff5;
+        }
+        .movie-input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #ccd8ec;
+            border-radius: 8px;
+            padding: 0 11px;
+            background: #fff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .movie-input:focus {
+            outline: none;
+            border-color: #6ea8ff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .primary-btn {
+            margin-top: 15px;
+            padding: 10px 18px;
+            cursor: pointer;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 5px 14px rgba(37, 99, 235, 0.24);
+        }
+        .primary-btn:hover { filter: brightness(1.04); }
+        .main-visual-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        #details {
+            width: 350px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #dde4ef;
+            border-radius: 10px;
+            height: fit-content;
+        }
+        .status-text {
+            margin: 0 0 8px;
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        .legend-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 0.85em;
+            color: #4e5765;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        #heatmap-panel {
+            margin-top: 14px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+        #heatmap {
+            overflow-x: auto;
+        }
+        #graph-panel {
+            margin-top: 14px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+        #reco-graph {
+            background: #fcfcff;
+            border: 1px solid #eceff6;
+            border-radius: 8px;
+        }
+        @media (max-width: 1120px) {
+            .main-visual-row { flex-direction: column; }
+            #details { width: 100%; }
+            #reco-graph { width: 100%; }
+        }
     </style>
 </head>
 <body>
+    <div class="page-shell">
 
-    <h1>Interactive Movie Explorer</h1>
-    <p>Exploring the MovieLens-25M Dataset</p>
+    <div style="margin-bottom: 16px;">
+        <h1 style="margin: 0 0 4px;">Interactive Movie Explorer</h1>
+        <p style="margin: 0; color: #5b6472;">Exploring the MovieLens-25M Dataset</p>
+    </div>
 
-    <div style="display: flex; gap: 20px;">
+    <div id="niche-control" class="section-card">
+        <div id="niche-header">
+            <strong>Niche Preference</strong>
+            <span id="niche-value">Balanced</span>
+        </div>
+        <input id="niche-slider" type="range" min="0" max="100" value="50">
+        <div style="display: flex; justify-content: space-between; font-size: 0.88em; color: #666; margin-top: 4px;">
+            <span>Mainstream Hits</span>
+            <span>Very Niche Gems</span>
+        </div>
+        <p style="margin: 8px 0 0; font-size: 0.9em; color: #666;">
+            Move the slider to focus the map on movies matching your desired popularity level.
+        </p>
+    </div>
+    <div id="onboarding" class="section-card">
+        <h3 style="margin-top:0;">Personalize Your Map</h3>
+        <p>Type 5 movies you love to anchor your "Personalized Space":</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" class="movie-input" placeholder="e.g. Toy Story">
+            <input type="text" class="movie-input" placeholder="e.g. Inception">
+            <input type="text" class="movie-input" placeholder="e.g. Matrix, The">
+            <input type="text" class="movie-input" placeholder="e.g. Finding Nemo">
+            <input type="text" class="movie-input" placeholder="e.g. Pulp Fiction">
+        </div>
+        <button onclick="personalizeByNames()" class="primary-btn">
+            Build My Personal Map
+        </button>
+    </div>
+
+    <div class="section-card" style="padding: 16px;">
+    <div class="main-visual-row">
         <div id="chart"></div>
 
-        <div id="details" style="width: 350px; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px; height: fit-content;">
+        <div id="details">
             <h2 style="margin-top: 0;">Movie Details</h2>
             <div id="movie-info"><em>Click a dot on the map to inspect the "Search Space"</em></div>
             
@@ -33,19 +228,33 @@
 
          </div>
     </div>
-    <div id="onboarding" style="padding: 20px; background: #f0f4ff; border-radius: 12px; margin-bottom: 20px; border: 1px solid #d0d7de;">
-        <h3 style="margin-top:0;">Personalize Your Map</h3>
-        <p>Type 5 movies you love to anchor your "Personalized Space":</p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" class="movie-input" placeholder="e.g. Toy Story">
-            <input type="text" class="movie-input" placeholder="e.g. Inception">
-            <input type="text" class="movie-input" placeholder="e.g. Matrix, The">
-            <input type="text" class="movie-input" placeholder="e.g. Finding Nemo">
-            <input type="text" class="movie-input" placeholder="e.g. Pulp Fiction">
+    </div>
+    <div id="heatmap-panel" class="section-card">
+        <h3 style="margin: 0 0 6px;">Genre-Decade Recommendation Bias Heatmap</h3>
+        <p id="heatmap-status" class="status-text">
+            Build a profile to compare recommended distribution vs full catalog.
+        </p>
+        <div class="legend-row">
+            <span><span style="display:inline-block; width:10px; height:10px; background:#b2182b; border-radius:2px; margin-right:4px;"></span>Under-recommended vs catalog</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#f7f7f7; border:1px solid #ddd; border-radius:2px; margin-right:4px;"></span>Neutral</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#2166ac; border-radius:2px; margin-right:4px;"></span>Over-recommended vs catalog</span>
         </div>
-        <button onclick="personalizeByNames()" style="margin-top: 15px; padding: 10px 20px; cursor: pointer; background: #0366d6; color: white; border: none; border-radius: 6px;">
-            Build My Personal Map
-        </button>
+        <div id="heatmap"></div>
+    </div>
+    <div id="graph-panel" class="section-card">
+        <h3 style="margin: 0 0 6px;">User-Centered Recommendation Graph (CF vs MF)</h3>
+        <p id="graph-status" class="status-text">
+            Build a profile to visualize your recommendation neighborhood.
+        </p>
+        <div class="legend-row">
+            <span><span style="display:inline-block; width:10px; height:10px; background:#222; border-radius:999px; margin-right:4px;"></span>You</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#ffd700; border-radius:999px; margin-right:4px;"></span>Anchors</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#2563eb; border-radius:999px; margin-right:4px;"></span>CF-like</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#dc2626; border-radius:999px; margin-right:4px;"></span>MF</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#7c3aed; border-radius:999px; margin-right:4px;"></span>Overlap</span>
+        </div>
+        <svg id="reco-graph" width="980" height="460"></svg>
+    </div>
     </div>
     <script src="ui_logic.js"></script>
 
