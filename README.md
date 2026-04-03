@@ -1,5 +1,9 @@
 # MovieLens-RecSys-Explorer
 
+<img width="990" height="740" alt="image" src="https://github.com/user-attachments/assets/997736ed-2cfd-49a3-bae2-3d5257b2d6e2" />
+
+<img width="886" height="736" alt="image" src="https://github.com/user-attachments/assets/a82a84db-8928-42af-8e87-1f31353f6770" />
+
 Interactive recommender-system explorer built on MovieLens data. The project precomputes recommendation artifacts offline and serves a static frontend that lets users:
 
 - enter 5 anchor movies
@@ -103,6 +107,8 @@ The app loads precomputed artifacts from `output/`:
 - `popularity.json` and `baseline_top100.json` for popularity metadata
 
 The 2D map is for visualization only. Recommendation ranking is computed from CF and MF neighbor aggregation in the frontend, then reranked with the niche/popularity slider.
+
+<img width="1732" height="1540" alt="image" src="https://github.com/user-attachments/assets/910f8cf9-4867-4585-8c2c-38cf23cd66b7" />
 
 ## Notes
 
