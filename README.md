@@ -27,10 +27,6 @@ Place the following files in `data/`:
 
 - `ratings.csv`
 - `movies.csv`
-- `links.csv` (optional for current app)
-- `tags.csv` (optional for current app)
-- `genome-scores.csv` (optional for current app)
-- `genome-tags.csv` (optional for current app)
 
 The current app directly uses `ratings.csv` and `movies.csv`.
 
