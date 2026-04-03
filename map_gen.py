@@ -16,7 +16,12 @@ df['x'] = vis_dims[:, 0]
 df['y'] = vis_dims[:, 1]
 
 movies = pd.read_csv('data/movies.csv')
-final_map = df[['movieId', 'x', 'y']].merge(movies, on='movieId')
+popularity = pd.read_json('output/popularity.json')
+final_map = df[['movieId', 'x', 'y']].merge(movies, on='movieId').merge(
+    popularity[['movieId', 'popularity_score', 'niche_score', 'popularity_tier']],
+    on='movieId',
+    how='left'
+)
 final_map.to_json('output/movie_map.json', orient='records')
 
 print("Final Movie Map Created!.")

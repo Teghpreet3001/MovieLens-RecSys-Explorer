@@ -106,6 +106,47 @@
             border-color: #6ea8ff;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
+        .anchor-field {
+            position: relative;
+        }
+        .anchor-chip {
+            margin-top: 6px;
+            min-height: 22px;
+            font-size: 0.82em;
+            color: #3b4a60;
+        }
+        .anchor-chip .chip {
+            background: #f8fbff;
+        }
+        .suggestion-box {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            z-index: 20;
+            background: #fff;
+            border: 1px solid #d8e1f0;
+            border-radius: 10px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+            overflow: hidden;
+            display: none;
+        }
+        .suggestion-item {
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: #fff;
+            padding: 10px 12px;
+            cursor: pointer;
+            border-top: 1px solid #eef2f8;
+            color: #172033;
+        }
+        .suggestion-item:first-child {
+            border-top: none;
+        }
+        .suggestion-item:hover {
+            background: #f3f7ff;
+        }
         .primary-btn {
             margin-top: 15px;
             padding: 10px 18px;
@@ -118,10 +159,58 @@
             box-shadow: 0 5px 14px rgba(37, 99, 235, 0.24);
         }
         .primary-btn:hover { filter: brightness(1.04); }
+        .secondary-text {
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        .inline-message {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #b45309;
+        }
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #d8e1f0;
+            background: #fff;
+            font-size: 0.85em;
+            color: #253044;
+        }
         .main-visual-row {
             display: flex;
             gap: 20px;
             align-items: flex-start;
+        }
+        .map-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .map-toolbar-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .ghost-btn {
+            border: 1px solid #d7dfef;
+            background: #fff;
+            color: #334155;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
         }
         #details {
             width: 350px;
@@ -144,6 +233,65 @@
             color: #4e5765;
             margin-bottom: 8px;
             flex-wrap: wrap;
+        }
+        .list-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .list-tab {
+            border: 1px solid #d8e1f0;
+            background: #fff;
+            color: #334155;
+            border-radius: 999px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.86em;
+        }
+        .list-tab.active {
+            background: #e8f0ff;
+            border-color: #bcd1ff;
+            color: #1547a8;
+            font-weight: 600;
+        }
+        .algo-toggle-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0 4px;
+        }
+        #recommendation-list {
+            border: 1px solid #e5ebf5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .rec-row {
+            display: grid;
+            grid-template-columns: minmax(260px, 1.4fr) 0.8fr 0.8fr 0.8fr 0.8fr;
+            gap: 12px;
+            padding: 12px 14px;
+            border-top: 1px solid #eef2f8;
+            align-items: start;
+            font-size: 0.9em;
+        }
+        .rec-row.header {
+            background: #f8fbff;
+            font-weight: 600;
+            border-top: none;
+        }
+        .rec-title {
+            font-weight: 600;
+            color: #162236;
+        }
+        .rec-meta {
+            color: var(--muted);
+            font-size: 0.88em;
+            margin-top: 3px;
+        }
+        .metric-label {
+            color: var(--muted);
+            font-size: 0.8em;
         }
         #heatmap-panel {
             margin-top: 14px;
@@ -198,22 +346,58 @@
     </div>
     <div id="onboarding" class="section-card">
         <h3 style="margin-top:0;">Personalize Your Map</h3>
-        <p>Type 5 movies you love to anchor your "Personalized Space":</p>
+        <p>Type and select 5 exact movies to anchor your personalized space.</p>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" class="movie-input" placeholder="e.g. Toy Story">
-            <input type="text" class="movie-input" placeholder="e.g. Inception">
-            <input type="text" class="movie-input" placeholder="e.g. Matrix, The">
-            <input type="text" class="movie-input" placeholder="e.g. Finding Nemo">
-            <input type="text" class="movie-input" placeholder="e.g. Pulp Fiction">
+            <div class="anchor-field">
+                <input type="text" class="movie-input" placeholder="e.g. Toy Story">
+                <div class="suggestion-box"></div>
+                <div class="anchor-chip"></div>
+            </div>
+            <div class="anchor-field">
+                <input type="text" class="movie-input" placeholder="e.g. Inception">
+                <div class="suggestion-box"></div>
+                <div class="anchor-chip"></div>
+            </div>
+            <div class="anchor-field">
+                <input type="text" class="movie-input" placeholder="e.g. Matrix, The">
+                <div class="suggestion-box"></div>
+                <div class="anchor-chip"></div>
+            </div>
+            <div class="anchor-field">
+                <input type="text" class="movie-input" placeholder="e.g. Finding Nemo">
+                <div class="suggestion-box"></div>
+                <div class="anchor-chip"></div>
+            </div>
+            <div class="anchor-field">
+                <input type="text" class="movie-input" placeholder="e.g. Pulp Fiction">
+                <div class="suggestion-box"></div>
+                <div class="anchor-chip"></div>
+            </div>
         </div>
         <button onclick="personalizeByNames()" class="primary-btn">
             Build My Personal Map
         </button>
+        <div id="anchor-validation" class="inline-message"></div>
+        <div style="margin-top: 14px;">
+            <div class="secondary-text" style="font-weight: 600;">Selected Anchors</div>
+            <div id="selected-anchors" class="chip-row">
+                <span class="chip">No anchors selected yet</span>
+            </div>
+        </div>
     </div>
 
     <div class="section-card" style="padding: 16px;">
     <div class="main-visual-row">
-        <div id="chart"></div>
+        <div>
+            <div class="map-toolbar">
+                <div class="secondary-text">Use scroll to zoom, drag to pan, or use quick controls.</div>
+                <div class="map-toolbar-actions">
+                    <button id="map-reset" class="ghost-btn">Reset View</button>
+                    <button id="map-fit-anchors" class="ghost-btn">Fit To Anchors</button>
+                </div>
+            </div>
+            <div id="chart"></div>
+        </div>
 
         <div id="details">
             <h2 style="margin-top: 0;">Movie Details</h2>
@@ -249,11 +433,28 @@
         <div class="legend-row">
             <span><span style="display:inline-block; width:10px; height:10px; background:#222; border-radius:999px; margin-right:4px;"></span>You</span>
             <span><span style="display:inline-block; width:10px; height:10px; background:#ffd700; border-radius:999px; margin-right:4px;"></span>Anchors</span>
-            <span><span style="display:inline-block; width:10px; height:10px; background:#2563eb; border-radius:999px; margin-right:4px;"></span>CF-like</span>
+            <span><span style="display:inline-block; width:10px; height:10px; background:#2563eb; border-radius:999px; margin-right:4px;"></span>CF</span>
             <span><span style="display:inline-block; width:10px; height:10px; background:#dc2626; border-radius:999px; margin-right:4px;"></span>MF</span>
             <span><span style="display:inline-block; width:10px; height:10px; background:#7c3aed; border-radius:999px; margin-right:4px;"></span>Overlap</span>
         </div>
         <svg id="reco-graph" width="980" height="460"></svg>
+    </div>
+    <div id="recommendation-panel" class="section-card" style="padding: 16px;">
+        <h3 style="margin: 0 0 6px;">Ranked Recommendation Lists</h3>
+        <p id="recommendation-status" class="status-text">
+            Build a profile to generate real CF, MF, overlap, and blended recommendation lists.
+        </p>
+        <div class="algo-toggle-row">
+            <button class="list-tab active" data-list-view="blended">All</button>
+            <button class="list-tab" data-list-view="cf">CF</button>
+            <button class="list-tab" data-list-view="mf">MF</button>
+            <button class="list-tab" data-list-view="overlap">Overlap</button>
+            <button class="list-tab" data-list-view="baseline">Baseline</button>
+        </div>
+        <div class="list-tabs">
+            <span class="secondary-text">The selected algorithm source above now drives the map highlights, heatmap source, graph nodes, and ranked list.</span>
+        </div>
+        <div id="recommendation-list"></div>
     </div>
     </div>
     <script src="ui_logic.js"></script>

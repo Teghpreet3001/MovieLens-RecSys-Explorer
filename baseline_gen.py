@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import numpy as np
+import re
 
 os.makedirs('output', exist_ok=True)
 
@@ -47,7 +48,7 @@ stats['popularity_tier'] = stats['popularity_percentile'].apply(popularity_tier)
 baseline_top_n = stats.sort_values('popularity_score', ascending=False)
 result = baseline_top_n.merge(movies, on='movieId')
 
-result[['movieId', 'title', 'genres', 'score', 'popularity_score', 'popularity_percentile', 'popularity_tier']].head(100).to_json('output/baseline.json', orient='records')
+result[['movieId', 'title', 'genres', 'score', 'popularity_score', 'popularity_percentile', 'popularity_tier']].head(100).to_json('output/baseline_top100.json', orient='records')
 
 result[
     [
@@ -70,4 +71,15 @@ result[
     }
 ).to_json('output/popularity.json', orient='records')
 
-print("Done! Check output/baseline.json and output/popularity.json")
+def normalize_title(title):
+    return re.sub(r'\s+', ' ', re.sub(r'[^a-z0-9\s]', ' ', re.sub(r'\(\d{4}\)', '', str(title).lower()))).strip()
+
+title_index = movies.copy()
+title_index['normalized_title'] = title_index['title'].apply(normalize_title)
+title_index['year'] = title_index['title'].str.extract(r'\((\d{4})\)', expand=False)
+title_index[['movieId', 'title', 'normalized_title', 'year', 'genres']].to_json(
+    'output/title_index.json',
+    orient='records'
+)
+
+print("Done! Check output/baseline_top100.json, output/popularity.json, and output/title_index.json")
