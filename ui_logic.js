@@ -982,6 +982,7 @@ Promise.all([
     });
 
     d3.select("#niche-slider").on("input", function() {
+        const start = performance.now();
         pendingNichePreference = +this.value / 100;
         d3.select("#niche-value").text(preferenceLabel(pendingNichePreference));
         scheduleNicheRender(true);
@@ -991,6 +992,8 @@ Promise.all([
             recomputeRecommendationsFromAnchors(true);
             applyNichePreferenceView(true);
         });
+        const end = performance.now();
+        console.log(`[Exp 2] Slider Throughput: ${(end - start).toFixed(2)}ms`);
     }).on("change", function() {
         pendingNichePreference = +this.value / 100;
         nichePreference = pendingNichePreference;
@@ -1000,6 +1003,7 @@ Promise.all([
     d3.select("#niche-value").text(preferenceLabel(nichePreference));
 
     window.personalizeByNames = function() {
+        const start = performance.now();
         const fields = Array.from(document.querySelectorAll(".anchor-field"));
         const unresolved = fields.filter(field => !resolveInputSelection(field.querySelector(".movie-input")));
 
@@ -1031,6 +1035,9 @@ Promise.all([
             Source mode: ${getCurrentModeLabel()}.<br>
             <small>Top blended picks: ${preview || "N/A"}</small>
         `);
+
+        const end = performance.now(); 
+        console.log(`[Exp 1] Cold-Start Latency: ${(end - start).toFixed(2)}ms`);   
     };
 
     setupAutocomplete();
