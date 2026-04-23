@@ -1055,5 +1055,5 @@ Promise.all([
     d3.select("#recommendation-status").text(message);
     d3.select("#heatmap-status").text(message);
     d3.select("#graph-status").text(message);
-    d3.select("#anchor-validation").text("Artifact load failure. Re-run python build_all.py and refresh.");
+    d3.select("#anchor-validation").text("Artifact load failure. Re-run python scripts/build_all.py and refresh.");
 });
