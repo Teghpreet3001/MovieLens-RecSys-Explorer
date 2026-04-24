@@ -15,7 +15,6 @@ You pick five anchor movies, and the UI blends **item–item collaborative filte
 - Use the niche slider to rebalance recommendations toward popular or long-tail titles.
 - Inspect the 2D map (t-SNE on MF embeddings), heatmap, and graph panels.
 
----
 
 ## What you need
 
@@ -23,7 +22,7 @@ You pick five anchor movies, and the UI blends **item–item collaborative filte
 - **Disk space**: the full **MovieLens 25M** archive is on the order of hundreds of MB compressed and well over 1 GB unpacked; building artifacts needs additional space under `output/`.
 - **RAM**: loading `ratings.csv` for the baseline and CF steps is memory-heavy on the full 25M file. If you hit memory limits, use a smaller MovieLens snapshot (for example MovieLens Latest Small) only if you accept that IDs and coverage may differ from a 25M-based demo.
 
----
+
 
 ## Where to get the data
 
@@ -48,7 +47,6 @@ cp /path/to/ml-25m/ratings.csv /path/to/ml-25m/movies.csv data/
 
 You do **not** need to commit `data/`; it is listed in `.gitignore` so local CSVs stay private and large files stay out of git.
 
----
 
 ## Quickest way to run everything
 
@@ -69,7 +67,6 @@ Useful options:
 
 Stop the server with **Ctrl+C** in the terminal.
 
----
 
 ## Manual setup (same result as the demo script, step by step)
 
@@ -85,16 +82,15 @@ python -m http.server 8000         # serve repo root; open http://localhost:8000
 
 The HTTP server **must** use the repo root as its working directory so paths like `output/movie_map.json` resolve the same way as in `demo.sh`.
 
----
 
 ## How the build pipeline fits together
 
 `scripts/build_all.py` runs four stages in order:
 
-1. **`baseline_gen.py`** — popularity metrics, weighted ratings, `baseline_top100.json`, `popularity.json`, and `title_index.json` for search.
-2. **`mf_gen.py`** — sparse user–item matrix, truncated SVD item factors, `embeddings.json`, and `mf_neighbors_topk.json` (cosine kNN in latent space). It samples up to **2M** ratings for speed while keeping a fixed random seed.
-3. **`cf_gen.py`** — item–item CF on users who rated each movie, restricted to movies with enough ratings; writes `cf_neighbors_topk.json`.
-4. **`map_gen.py`** — t-SNE 2D coordinates from MF embeddings plus metadata → `movie_map.json`.
+1. **`baseline_gen.py`** : popularity metrics, weighted ratings, `baseline_top100.json`, `popularity.json`, and `title_index.json` for search.
+2. **`mf_gen.py`** : sparse user–item matrix, truncated SVD item factors, `embeddings.json`, and `mf_neighbors_topk.json` (cosine kNN in latent space). It samples up to **2M** ratings for speed while keeping a fixed random seed.
+3. **`cf_gen.py`** : item–item CF on users who rated each movie, restricted to movies with enough ratings; writes `cf_neighbors_topk.json`.
+4. **`map_gen.py`** : t-SNE 2D coordinates from MF embeddings plus metadata → `movie_map.json`.
 
 After a successful build, `output/` should contain at least:
 
@@ -106,7 +102,6 @@ After a successful build, `output/` should contain at least:
 
 **`generate_eval.py`** reads the neighbor JSON and `movies.csv`, runs a few simulation-style plots, and saves PNGs under **`eval_results/`** (useful for slides or reports, not required for the web UI).
 
----
 
 ## Repository layout
 
@@ -121,22 +116,20 @@ After a successful build, `output/` should contain at least:
 | `index.html`, `ui_logic.js` | Static app; load in a browser via any static file server. |
 | `demo.sh` | One command to install, build, validate, optionally plot, and serve. |
 
----
 
 ## How the frontend uses the artifacts
 
 The D3 app loads JSON from `output/`:
 
-- **`title_index.json`** — resolve typed movie titles to `movieId`s.
-- **`cf_neighbors_topk.json` / `mf_neighbors_topk.json`** — neighbor lists and scores for on-the-fly ranking and blending.
-- **`movie_map.json`** — scatterplot positions and popularity fields for the map.
-- **`popularity.json`** and **`baseline_top100.json`** — niche vs mainstream signals and baselines.
+- **`title_index.json`** : resolve typed movie titles to `movieId`s.
+- **`cf_neighbors_topk.json` / `mf_neighbors_topk.json`** : neighbor lists and scores for on-the-fly ranking and blending.
+- **`movie_map.json`** : scatterplot positions and popularity fields for the map.
+- **`popularity.json`** and **`baseline_top100.json`** : niche vs mainstream signals and baselines.
 
 The 2D map is a **visualization** of MF structure (after t-SNE). Final ranked lists combine neighbor scores in JavaScript and apply the niche slider on top of stored popularity features.
 
 <img width="1732" height="1540" alt="Extended analysis panels" src="https://github.com/user-attachments/assets/910f8cf9-4867-4585-8c2c-38cf23cd66b7" />
 
----
 
 ## Tests
 
@@ -149,21 +142,18 @@ python -m pytest tests -v
 
 Tests assert that expected JSON files exist, are non-empty arrays with the right keys, and that `index.html` still contains key UI hooks.
 
----
 
 ## Notebook experiments
 
 Under **`experiments/cf_mf_umap/`** there is a longer notebook workflow (downloads/unpacks MovieLens inside the notebook flow, trains models, UMAP, etc.). See **`experiments/cf_mf_umap/README.md`** for conda environment setup. That path is separate from the lightweight static app pipeline in `scripts/`.
 
----
 
 ## Troubleshooting
 
-- **`Address already in use`** — Something else is bound to port 8000. Use `PORT=8080 bash demo.sh` or stop the other process.
-- **Build is slow or uses a lot of RAM** — Expected on full `ratings.csv`. `SKIP_EVAL=1 bash demo.sh` skips figure generation only; the heavy part is usually MF/CF over large data.
-- **Empty map or “Artifact load failure” in the UI** — Re-run `python scripts/build_all.py`, confirm `output/*.json` exist, and ensure the server root is the repo directory (not `scripts/` or `output/`).
+- **`Address already in use`** : Something else is bound to port 8000. Use `PORT=8080 bash demo.sh` or stop the other process.
+- **Build is slow or uses a lot of RAM** : Expected on full `ratings.csv`. `SKIP_EVAL=1 bash demo.sh` skips figure generation only; the heavy part is usually MF/CF over large data.
+- **Empty map or “Artifact load failure” in the UI** : Re-run `python scripts/build_all.py`, confirm `output/*.json` exist, and ensure the server root is the repo directory (not `scripts/` or `output/`).
 
----
 
 ## Notes
 
